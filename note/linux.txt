@@ -1,0 +1,162 @@
+find [path] [option]
+			-mtime [n|+n|-n] n天被更改过的文件名 +n:n天之前（不含n天）|-n:n天之内（含n天）
+			-newer [file] 列出比file还新的文件名	
+			-user [name] 所有者为name的文件
+			-group [name] 所属用户组为name的文件
+			-uid [id] 所有者用户id的文件
+			-gid [id] 所属用户组id的文件			
+			-name [filename] 文件名filename的文件
+			-size [+-size] 比size大（+）或小（-）的文件
+			-type [type] 类型为type的文件，一般文件（f），设备文件（b，c），目录（d），连接文件（l），socket（s），FIFO管道文件（p）
+			-perm [mode|+mode|-mode] 文件权限为mode的文件 +mode：全部报货mode权限，-mode：包含任一mode权限
+			
+ls [option] [path]
+	-a 全部连同隐藏
+	-A 同-a，不包括.和..两个目录
+	-d 列出目录
+	-f 直接列出结果（ls默认以档名排序）
+	-F 附加数据结构，*：可执行档，/：目录，=：socket，|：FIFO档
+	-h 文档容量大小显示友好转换
+	-i 列出inode
+	-l 列出文档属性
+	-n 列出uid和gid
+	-R 列出子目录
+	-S 以档案容量排序
+	-t 以时间排序
+	-r 反向排序
+	--full-time
+	
+cd [option] [path]
+	. 当前目录
+	.. 上层目录
+	~ 用户目录
+	- 上一个目录
+	!$ 上个命令参数作为参数
+	-P 真实目录 
+	
+cp [option] [sourceFile] [targetFile]
+	-b 备份覆盖
+	-a 复制文件特性（需要源文件和目标文件都存在）
+	-p 连同文件特性一起复制，同-a，不需目标文件
+	-i 询问是否覆盖，避免直接覆盖已用文件
+	-r 递归复制
+	-u 有差异才覆盖
+	
+rm [option] [path]
+	-f 强制force
+	-i 询问
+	-r 递归删除
+	
+mv [option] [path]
+	-b 备份覆盖
+	-f 强制force
+	-i 询问是否覆盖
+	-u 更新，比目标文件新才覆盖
+	
+tar [option] [sourceFileName]
+	-c 新建打包文件
+	-x 解打包文件
+	-j bzip2方式 （.bz2）
+	-J xz方式 （.xz）
+	-z gzip方式	 （.gz）
+	-t 列出文件内容
+	-p --same-permissions 原文件权限
+	-v 显示过程
+	-C [dir]指定目录
+	-f [targetFilename] 指定文件名filename
+	
+mkdir [option]
+	   -m 设置权限
+	   -p 创建父目录
+	   -v 显示过程
+
+rmdir [option]
+	   -p 删除父目录（为空时）
+	   -v 显示过程
+	   
+ps [option] (aux|ef)
+    -a 不与terminal有关的所有进程
+	-A 所有进程
+	-f 显示uid，ppip，c与stime
+	-u 显示%CPU，%MEM，VSZ，RSS，TTY，STAT（D：休眠，R：执行中，S：静止，T：暂停，z：僵死）
+			cpu使用率，内存使用率，虚拟内存大小，内存大小，
+	-l 显示详细
+	
+chmod [option] [perm] [path]
+		-R 递归
+		-v 显示过程
+		-c 显示变更信息
+				r(4),w(2),x(1),-(0)
+				u,g,o,a,+
+		chmod u+x,g+x path
+		chmod u=rwx,g=x path
+		chmod 721 path
+		
+chown [option] [owner:group] [path]
+		-R 递归
+		-v 显示过程
+		-c 显示变更信息
+		-h 针对符号链接
+		chown tim:tim *
+		
+chgrp [option] [group] [path]
+		-R 递归
+		-v 显示过程
+		-c 显示变更信息
+		-h 针对符号链接
+		chgrp tim *
+		
+useradd [option] 
+		 -c [comment] 添加备注
+		 -d [directory] 登录目录
+		 -s [shellpath] 登录shell
+		 -g [groupname] 所属群组
+		 -G [groupname] 附加所属群组
+		 -n 取消建立以用户名的群组
+		 -u [uid] 指定用户id （不能重复，501-2ⁿ，n=16）
+		 -e [YYYY-MM-DD]有效期限 
+		 -f [days]密码过期后多少天关闭账号
+		 -r 系统账号
+		 
+usermod [option] （账号无密码不可登录）
+		 -l [username] 账号名
+		 -c [comment] 备注
+		 -d [directory] 登录目录
+		 -s [shellpath] 登录shell
+		 -u [uid] 指定用户id
+		 -g [groupname] 所属群组
+		 -G [groupname] 附加所属群组
+		 -e [YYYY-MM-DD]有效期限
+		 -f [days]密码过期后多少天关闭账号
+		 -L 暂时冻结 /etc/shadow密码前加！
+		 —U 取消冻结
+		 
+userdel [option]
+		 -f 强制，即使用户已登录
+		 -r 同时删除用户家目录和邮件池
+		 
+groupadd [option]
+		  -g [gid] 群组id
+		  -o 允许id不唯一
+		  -f 如果已存在，以成功状态退出
+		  -r 系统群组
+		  -k 覆盖/etc/login.defs中默认值
+		  
+groupmod [option]
+		  -g [gid] 群组id
+		  -n [groupname] 群组名
+		  -o 允许id不唯一
+		  
+		  
+groupdel [option]
+		  -f 强制force
+		
+sudo [option]
+	  -b 后台执行
+	  -H 替换新的HOME环境变量
+	  -k 下次sudo需要输入密码，结束密码有效期限
+	  -l 列出指令
+	  -s 指定shell
+	  -u [username] 指定用户
+	  -v 延迟密码有效期限5分钟
+	  -V 显示版本信息
