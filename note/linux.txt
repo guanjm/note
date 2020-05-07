@@ -3,6 +3,18 @@
 username: passwd: lastchg: min: max: warn: inactive: expire: flag 
 登录名:加密口令:最后一次修改时间:最小时间间隔:最大时间间隔:警告时间:不活动时间:失效时间:标志
 
+bg, fg, jobs ,ctrl+c, ctrl+z
+
+alias ~/.bashrc /etc/bashrc /etc/profile.d
+
+/etc/shadow
+    2：
+        :: 没有密码,无密码登录
+        :!: 账号登录方式锁定
+        :*: 账号登录方式锁定
+        :!!: 从未设置过密码
+        $id$salt$hashed $加密算法$加密盐$密码
+
 find [path] [option]
 			-mtime [n|+n|-n] n天被更改过的文件名 +n:n天之前（不含n天）|-n:n天之内（含n天）
 			-newer [file] 列出比file还新的文件名
@@ -157,6 +169,14 @@ groupmod [option]
 		  
 groupdel [option]
 		  -f 强制force
+
+gpasswd [option]
+         -A [username1,username2..] 设置管理员列表（仅root）
+         -M [username1,username2..] 设置群组用户列表
+         -r 移除群组密码
+         -R 失效群组密码
+         -a [username] 添加用户
+         -d [username] 删除用户
 		
 sudo [option]
 	  -b 后台执行
