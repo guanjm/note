@@ -1,7 +1,8 @@
 变量名
     [a-z][A-Z][0-9]_
     变量名=值
-    访问值:$变量名
+    变量引用:$变量名
+            ${变量名} 防止歧义
     只读变量:readonly 变量名（变更变量值会报错）
     取消变量:unset 变量名
 
@@ -24,6 +25,8 @@
     $PWD 当前所在路径
     $TERM 终端类型
     $HOSTNAME 主机名称
+
+
 
 重定向规则（标准输入0，标准输出1，错误输出2称为文件描述符）
     1、标准输入0，标准输出1，错误输出2需要分别重定向，一个重定向只能改变其中一个
@@ -53,7 +56,7 @@
         -ge [ $a -ge $b ] >=
         -le [ $a -le $b ] <=
 
-    布尔运算
+    布尔运算符
         ! [ ! false]
         -o [ $a -o $b ] or
         -a [ $a -a $b ] and
@@ -64,3 +67,75 @@
         -z [ -z $a ] 长度是否为0
         -n [ -n $a ] 长度大于0
         str [ $a ] 是否非空字符串
+
+    文件运算符
+        -b filename [ -b $filename ] 是否块设备文件
+        -c filename [ -c $filename ] 是否字符设备文件
+        -d filename [ -d $filename ] 是否目录
+        -f filename [ -f $filename ] 是否普通文件
+        -g filename [ -g $filename ] 是否设置SGID位
+        -k filename [ -f $filename ] 是否社会组了粘着位（sticky bit）
+        -p filename [ -p $filename ] 是否管道
+        -u filename [ -w $filename ] 是否设置SUID位
+        -r filename [ -r $filename ] 是否可读
+        -w filename [ -w $filename ] 是否可写
+        -x filename [ -x $filename ] 是否可执行
+        -s filename [ -s $filename ] 是否大小大于0
+        -e filename [ -e $filename ] （文件或目录）是否存在
+
+变量类型
+    局部变量：在脚本或命令中定义，仅在shell中有效
+    环境变量：所有的程序都有效，shell也可以定义环境变量
+    shell变量：由shell设置的特殊变量
+    env 显示环境变量
+    set 显示shell所有变量
+    var=[var] 局部变量
+    export var=[var] 环境变量
+    unset var 删除变量（局部和环境变量都行，不能删除只读变量）
+
+shell替换
+
+    命令替换：shell可以先执行命令，将输出结果暂时保存，在适当的地方输出（优先执行）
+    语法：var=`command` 反引号，位于esc下方
+         var=$(command)
+
+    变量替换：根据变量状态来改变它的值
+    ${var} 原有值
+    ${var:-word} 若为空或者unset，返回word，否则返回var
+    ${var:=word} 若为空或者unset，var赋值word，并返回
+    ${var:+word} 若不为空或不为unset，返回word，否则返回var
+    ${var:?message} 若为空或者unset，message输出标准错误输出，并终止脚本
+
+条件判断
+    if [condition]; then
+        [command]
+    elif [condition]; then
+        [command]
+    else
+        [command]
+    fi
+
+case判断
+    case [variable] in
+    [condition1])
+        command
+    ;;
+    [condition2])
+        command
+    ;;
+    *)
+        command
+    esac
+
+for循环
+    for [condition]; do
+        [command]
+    done
+while循环
+    while [condition]; do
+        [command]
+    done
+
+break [n] 跳出第n层循环
+continue [n] 跳过本次循环，跳出第n层
+exit [str] 退出当前命令，本次命令结果为[str]
