@@ -6,6 +6,8 @@ username: passwd: lastchg: min: max: warn: inactive: expire: flag
 bg, fg, jobs ,ctrl+c, ctrl+z
 
 alias ~/.bashrc /etc/bashrc /etc/profile.d
+alias [var1]='[var2]'
+unalias [var1]
 
 /etc/shadow
     2：
@@ -148,7 +150,7 @@ usermod [option] （账号无密码不可登录）
 		 -e [YYYY-MM-DD]有效期限
 		 -f [days]密码过期后多少天关闭账号
 		 -L 暂时冻结 /etc/shadow密码前加！
-		 —U 取消冻结
+		 —U 取消冻结 /etc/shadow密码前去！
 		 
 userdel [option]
 		 -f 强制，即使用户已登录
