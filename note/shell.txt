@@ -1,3 +1,9 @@
+!：命令，$:最后|参数，*：全部，@：全部；#：起始|数量，
+1、命令同行需要;分隔；
+2、{} 开始需要空格符，结尾需要;
+
+
+
 变量名
     [a-z][A-Z][0-9]_
     变量名=值
@@ -121,6 +127,36 @@ shell替换
     $var1$var2 直接拼接，之间不能有空格，必须直接衔接
     $var1" "$var2 之间直接衔接字符串
     "$var1 $var2" 双引号下，可有空格
+字符串截取（左起起始数字0，右起起始数字1）
+    左起截取
+        ${string:start} 省略length，截取到字符串末尾
+        ${string:start:length}
+    右起截取
+        ${string:0-start} 省略length，截取到字符串末尾
+        ${string:0-start:length} 0- 是固定写法
+    指定字符（子字符串）开始截取
+        左起截取
+            ${string#chars} `a=1234567890 echo ${a#123456}` 无*时，需要重头开始
+            ${string#*chars} `a=1234567890 echo ${a#*56}` 123456=*56，用于直接匹配56前面全部
+            ${string##*chars} 匹配到最后指定的字符
+        右起
+            ${string%chars}
+            ${string%chars*}
+            ${string%%chars*}
+
+数组
+    定义（等号两边都不能有空格）
+        1、array=(var1 var2) 使用空格来分隔
+        2、array[1]=var1
+            array[2]=var2
+    使用
+        1、$array[n]
+        2、${array[n]}
+        3、${array[*]}或${array[@]} 全部
+        4、unset array | unset array[n]
+    长度
+        1、${#array[n]}} 某个数量
+        2、${#array[*]}或${#array[@]} 该数据数量
 
 
 条件判断
@@ -161,17 +197,3 @@ exit [str] 退出当前命令，本次命令结果为[str]
 1、!!或!$ 上一条命令
 2、!n 第n条命令（通过history可获得）
 3、![str] 最近str开头的命令
-
-数组
-    定义
-        1、array=(var1,var2)
-        2、array[1]=var1
-            array[2]=var2
-    使用
-        1、$array[n]
-        2、${array[n]}
-        3、${array[*]}或${array[@]} 全部
-        4、${#array[n]}} 某个数量
-        4、${#array[*]}或${#array[@]} 该数据数量
-
-http://c.biancheng.net/view/821.html
