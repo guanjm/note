@@ -6,8 +6,12 @@ username: passwd: lastchg: min: max: warn: inactive: expire: flag
 bg, fg, jobs ,ctrl+c, ctrl+z
 
 alias ~/.bashrc /etc/bashrc /etc/profile.d
-alias [var1]='[var2]'
-unalias [var1]
+alias var1='var2'
+unalias var1
+
+echo 最后默认加上换行符
+    -n 不换行
+    -e 解释转义字符（使用\c来不换行）
 
 /etc/shadow
     2：

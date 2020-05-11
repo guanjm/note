@@ -68,7 +68,7 @@
         -a [ $a -a $b ] and
 
     字符串运算符
-        = [ $a = $b ]
+        == [ $a == $b ]
         != [ $a != $b ]
         -z [ -z $a ] 长度是否为0
         -n [ -n $a ] 长度大于0
@@ -153,11 +153,28 @@ shell替换
         1、$array[n]
         2、${array[n]}
         3、${array[*]}或${array[@]} 全部
-        4、unset array | unset array[n]
     长度
         1、${#array[n]}} 某个数量
         2、${#array[*]}或${#array[@]} 该数据数量
+    拼接
+        arrayNew=(${array1[*]} ${array2[@]})
+    删除
+        unset array[n] 删除某个元素
+        unset array 删除整个数组
 
+关联数组
+    定义
+        declare -A array
+        array[var1]=var1
+        array[var2]=var2
+        array[var3]=var3
+    使用
+        ${array[var1]}
+        ${array[*]}或${array[@]} 所有元素值
+        ${!array[*]}或${array[@]} 所有下标
+    长度
+        ${#array[*]}
+        ${#array[@]}
 
 条件判断
     if [condition]; then
