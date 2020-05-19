@@ -1,0 +1,58 @@
+#! /bin/bash
+user=root
+port=3301
+password=zxc123
+path=/home/Tim/mysql
+mysqld=$path/mysql-8.0.18-el7-x86_64/bin/mysqld
+mysql=$path/mysql-8.0.18-el7-x86_64/bin/mysql
+cnf=$path/$port/my.cnf
+pid=$path/$port/mysql.pid
+
+function start() {
+	if [[ -f $pid ]]
+		then 
+			echo 'mysql has started! pid: ' `cat $pid`
+			exit
+	fi
+	$mysqld --defaults-file=$cnf &
+	sleep 3s
+	if [[ -f $pid ]]
+		then 
+			echo 'mysql start succ! pid: ' `cat $pid`
+		else 
+			echo 'mysql start fail!'
+	fi
+}
+
+function shutdown() {
+	if [[ ! -f $pid ]]
+		then 
+			echo 'mysql has not started!'
+			exit
+	fi
+	$mysql --defaults-file=$cnf -u$user -p$password -e shutdown >/dev/null 2>&1
+	sleep 3s
+	if [[ -f $pid ]]
+		then echo 'mysql shutdown fail! pid: '`cat $pid`
+		else echo 'mysql shutdown succ!'
+	fi
+}
+
+sign=$1
+while [[ $sign != 'start' && $sign != 'shutdown' && $sign != 'exit' ]]
+	do
+		read -p 'please input start | shutdown | exit :' sign
+	done
+case $sign in
+	'start')
+		start
+;;
+	'shutdown')
+		shutdown
+;;
+	'exit')
+		exit
+esac
+	
+
+
