@@ -195,7 +195,7 @@ sudo [option]
 	  -v 延迟密码有效期限5分钟
 	  -V 显示版本信息
 	  
--passwd [option]
+passwd [option]
 		 -d 删除密码，无密码登录（需管理员）
 		 -l 锁定密码，不能登录（需管理员）
 		 -u 解锁密码，恢复登录（需管理员）
@@ -207,6 +207,16 @@ sudo [option]
 		 -S 密码状态（需管理员）
 		 -k
 		 -f 强制force
+
+chage [option]
+        -d [date] 修改日期
+        -E [date] 过期日期
+        -I [days] 密码过期days后账号失效
+        -l 账号信息
+        -m [days] 最小天数
+        -M [days] 最大天数
+        -R [days] 用户根目录
+        -W [days] 警告天数
 		 
 groups [username]
 

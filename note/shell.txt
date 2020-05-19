@@ -2,7 +2,14 @@
 1、命令同行需要;分隔；
 2、{} 开始需要空格符，结尾需要;
 
+shell开头
+    #!/bin/bash
 
+shell执行
+    1、脚本绝对路径或相对路径   /home/run.sh或者./run.sh
+    2、bash [脚本] 或者 sh [脚本] 脚本无x权限时可执行
+    3、source [脚本] 或者 . [脚本]
+    第一二种子shell方式，第三种是当前shell方式
 
 变量名
     [a-z][A-Z][0-9]_
@@ -80,7 +87,7 @@
         -d filename [ -d $filename ] 是否目录
         -f filename [ -f $filename ] 是否普通文件
         -g filename [ -g $filename ] 是否设置SGID位
-        -k filename [ -f $filename ] 是否社会组了粘着位（sticky bit）
+        -k filename [ -f $filename ] 是否设置粘着位（sticky bit）
         -p filename [ -p $filename ] 是否管道
         -u filename [ -w $filename ] 是否设置SUID位
         -r filename [ -r $filename ] 是否可读
