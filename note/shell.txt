@@ -1,0 +1,223 @@
+!：命令，$:最后|参数，*：全部，@：全部；#：起始|数量，
+1、命令同行需要;分隔；
+2、{} 开始需要空格符，结尾需要;
+
+shell开头
+    #!/bin/bash
+
+shell执行
+    1、脚本绝对路径或相对路径   /home/run.sh或者./run.sh
+    2、bash [脚本] 或者 sh [脚本] 脚本无x权限时可执行
+    3、source [脚本] 或者 . [脚本]
+    第一二种子shell方式，第三种是当前shell方式
+
+变量名
+    [a-z][A-Z][0-9]_
+    变量名=值
+    变量引用:$变量名
+            ${变量名} 防止歧义
+    只读变量:readonly 变量名（变更变量值会报错）
+    取消变量:unset 变量名
+
+系统变量
+    $0 当前脚本名称
+    $n 当前脚本的第n个参数
+    $# 当前脚本的参数个数
+    $*|$@ 当前脚本的所有参数
+        不被双引号包括时，都分开输出（数组）
+        被双引号包括时，$*将会整体输出（字符串）
+    $? 上个命令的执行状态或者返回值，成功0，失败1
+    $$ 程序本身的pid号
+
+环境变量
+    $PATH 命令所示路径，以冒号为分隔
+    $HOME 家目录
+    $SHELL shell类型
+    $USER 用户名
+    $ID 用户id
+    $PWD 当前所在路径
+    $TERM 终端类型
+    $HOSTNAME 主机名称
+
+
+
+重定向规则（标准输入0，标准输出1，错误输出2称为文件描述符）
+    1、标准输入0，标准输出1，错误输出2需要分别重定向，一个重定向只能改变其中一个
+    2、标准输入0和标准输出1可以省略（在重定向符号左侧时）
+    3、标准输入0，标准输出1，错误输出2在重定向符号左侧直接写即可，在右侧时需前面加&
+    4、标准输入0，标准输出1，错误输出2与重定向符号之间不能有空格
+
+基本运算符
+    1、运算符和表达书之间必须有空格
+    2、''，倒逗号之间包含完整的表达
+
+    算术运算符（条件符在方括号里，并且有空格隔开）
+        + 'expr $a + $b'
+        - 'expr $a - $b'
+        * 'expr $a * $b'
+        / 'expr $a / $b'
+        % 'expr $a % $b'
+        =
+        == [ $a == $b ]
+        != [ $a != $b ]
+
+    关系运算符（条件符在方括号里，并且有空格隔开）
+        -eq [ $a -eq $b ] ==
+        -ne [ $a -ne $b ] !=
+        -gt [ $a -gt $b ] >
+        -lt [ $a -lt $b ] <
+        -ge [ $a -ge $b ] >=
+        -le [ $a -le $b ] <=
+
+    布尔运算符
+        ! [ ! false]
+        -o [ $a -o $b ] or
+        -a [ $a -a $b ] and
+
+    字符串运算符
+        == [ $a == $b ]
+        != [ $a != $b ]
+        -z [ -z $a ] 长度是否为0
+        -n [ -n $a ] 长度大于0
+        str [ $a ] 是否非空字符串
+
+    文件运算符
+        -b filename [ -b $filename ] 是否块设备文件
+        -c filename [ -c $filename ] 是否字符设备文件
+        -d filename [ -d $filename ] 是否目录
+        -f filename [ -f $filename ] 是否普通文件
+        -g filename [ -g $filename ] 是否设置SGID位
+        -k filename [ -f $filename ] 是否设置粘着位（sticky bit）
+        -p filename [ -p $filename ] 是否管道
+        -u filename [ -w $filename ] 是否设置SUID位
+        -r filename [ -r $filename ] 是否可读
+        -w filename [ -w $filename ] 是否可写
+        -x filename [ -x $filename ] 是否可执行
+        -s filename [ -s $filename ] 是否大小大于0
+        -e filename [ -e $filename ] （文件或目录）是否存在
+
+变量类型
+    局部变量：在脚本或命令中定义，仅在shell中有效
+    环境变量：所有的程序都有效，shell也可以定义环境变量
+    shell变量：由shell设置的特殊变量
+    env 显示环境变量
+    set 显示shell所有变量
+    var=[var] 局部变量
+    export var=[var] 环境变量
+    unset var 删除变量（局部和环境变量都行，不能删除只读变量）
+
+shell替换
+
+    命令替换：shell可以先执行命令，将输出结果暂时保存，在适当的地方输出（优先执行）
+    语法：var=`command` 反引号，位于esc下方
+         var=$(command)
+
+         当输出内容包括多行，或者多个联系空白符，使用变量使用双引号包括起来
+     否则系统默认使用空白符来填充，压缩成一个。
+        echo `ps`  echo "`ps`"
+        `echo ps`
+        该命令应该是子命令，不对命令外的环境造成改变
+
+
+    变量替换：根据变量状态来改变它的值
+    ${#var} 获取参数长度
+    ${var} 原有值
+    ${var:-word} 若为空或者unset，返回word，否则返回var
+    ${var:=word} 若为空或者unset，var赋值word，并返回
+    ${var:+word} 若不为空或不为unset，返回word，否则返回var
+    ${var:?message} 若为空或者unset，message输出标准错误输出，并终止脚本
+
+字符串
+    ''单引号，不转义，直接输出
+    ""双引号，有变量会解释
+字符串拼接
+    $var1$var2 直接拼接，之间不能有空格，必须直接衔接
+    $var1" "$var2 之间直接衔接字符串
+    "$var1 $var2" 双引号下，可有空格
+字符串截取（左起起始数字0，右起起始数字1）
+    左起截取
+        ${string:start} 省略length，截取到字符串末尾
+        ${string:start:length}
+    右起截取
+        ${string:0-start} 省略length，截取到字符串末尾
+        ${string:0-start:length} 0- 是固定写法
+    指定字符（子字符串）开始截取
+        左起截取
+            ${string#chars} `a=1234567890 echo ${a#123456}` 无*时，需要重头开始
+            ${string#*chars} `a=1234567890 echo ${a#*56}` 123456=*56，用于直接匹配56前面全部
+            ${string##*chars} 匹配到最后指定的字符
+        右起
+            ${string%chars}
+            ${string%chars*}
+            ${string%%chars*}
+
+数组
+    定义（等号两边都不能有空格）
+        1、array=(var1 var2) 使用空格来分隔
+        2、array[1]=var1
+            array[2]=var2
+    使用
+        1、$array[n]
+        2、${array[n]}
+        3、${array[*]}或${array[@]} 全部
+    长度
+        1、${#array[n]}} 某个数量
+        2、${#array[*]}或${#array[@]} 该数据数量
+    拼接
+        arrayNew=(${array1[*]} ${array2[@]})
+    删除
+        unset array[n] 删除某个元素
+        unset array 删除整个数组
+
+关联数组
+    定义
+        declare -A array
+        array[var1]=var1
+        array[var2]=var2
+        array[var3]=var3
+    使用
+        ${array[var1]}
+        ${array[*]}或${array[@]} 所有元素值
+        ${!array[*]}或${array[@]} 所有下标
+    长度
+        ${#array[*]}
+        ${#array[@]}
+
+条件判断
+    if [condition]; then
+        [command]
+    elif [condition]; then
+        [command]
+    else
+        [command]
+    fi
+
+case判断
+    case [variable] in
+    [condition1])
+        command
+    ;;
+    [condition2])
+        command
+    ;;
+    *)
+        command
+    esac
+
+for循环
+    for [condition]; do
+        [command]
+    done
+while循环
+    while [condition]; do
+        [command]
+    done
+
+break [n] 跳出第n层循环
+continue [n] 跳过本次循环，跳出第n层
+exit [str] 退出当前命令，本次命令结果为[str]
+
+!妙用（记录命令历史）
+1、!!或!$ 上一条命令
+2、!n 第n条命令（通过history可获得）
+3、![str] 最近str开头的命令
