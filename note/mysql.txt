@@ -1,3 +1,0 @@
-下载地址:https://downloads.mysql.com/archives/community
-	linux generic
-	
