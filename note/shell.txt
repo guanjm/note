@@ -45,6 +45,8 @@ shell执行
     1、标准输入0，标准输出1，错误输出2需要分别重定向，一个重定向只能改变其中一个
     2、标准输入0和标准输出1可以省略（在重定向符号左侧时）
     3、标准输入0，标准输出1，错误输出2在重定向符号左侧直接写即可，在右侧时需前面加&
+        fd<file <file 0<file
+        fd>file >file 1>file
     4、标准输入0，标准输出1，错误输出2与重定向符号之间不能有空格
 
 基本运算符
@@ -229,3 +231,26 @@ shell注释
     2、通过花括号括起来，定义为函数不调用
     3、<<EOF (EOF可自定义)
        EOF
+
+; command1;command2
+    所有命令都执行，成功与否所有都会执行
+| command1|command2
+    上个命令结果作为下个命令参数
+& command&
+    设置为后台运行
+&& command1&&command2
+    从左到右按顺序执行，上个命令执行成功（返回值为0）下个命令才执行
+|| command1||command2
+    从左到右按顺序执行，遇到执行成功（返回值为0）则终止
+
+bg, fg, jobs ,ctrl+c, ctrl+z, nohup, &
+   ctrl+c 强制中断程序
+   ctrl+z 任务暂停，可通过jobs查看
+   jobs 查看后台任务
+   fg 后台任务放到前台继续运行
+      fg [%jobNumber] jobs命令查询结果的序号
+   bg 后台任务在后台继续运行
+      bg [%jobNumber] jobs命令查询结果的序号
+   nohup 用户断开终端继续运行
+      nohup [command]
+      nohup [command] &

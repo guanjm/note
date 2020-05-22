@@ -3,8 +3,6 @@
 username: passwd: lastchg: min: max: warn: inactive: expire: flag 
 登录名:加密口令:最后一次修改时间:最小时间间隔:最大时间间隔:警告时间:不活动时间:失效时间:标志
 
-bg, fg, jobs ,ctrl+c, ctrl+z
-
 alias ~/.bashrc /etc/bashrc /etc/profile.d
 alias var1='var2'
 unalias var1
