@@ -1,0 +1,6 @@
+1、下载解压mysql包
+2、配置my.cnf配置文件
+3、bin/mysqld --initialize 初始化数据库
+4、bin/mysqld 启动数据库
+5、防火墙
+6、mysql用户访问权限
