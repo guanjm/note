@@ -54,7 +54,7 @@ cd [option] [path]
 	.. 上层目录
 	~ 用户目录
 	- 上一个目录
-	!$ 上个命令参数作为参数
+	!$ 上个命令作为参数
 	-P 真实目录 
 	
 cp [option] [sourceFile] [targetFile]

@@ -1,0 +1,13 @@
+Server
+    1、导入spring-cloud-starter-netflix-eureka-server包
+    2、@EnableConfigServer注解
+    3、相关配置，需放在bootstrap配置文件里
+
+Client
+    1、导入spring-cloud-config-client包
+    2、相关配置
+        其中引用服务发现：
+            discovery:
+                enable: true
+                service-id: cloudConfig的appname
+        同时需要引入eurekaClient

@@ -1,0 +1,21 @@
+Server
+    1、导入spring-cloud-starter-netflix-eureka-server包
+    2、@EnableEurekaServer注解
+    3、配置文件：
+        client:
+            instance:
+                #注册到eureka服务的应用名，同时也是ipaddress
+                appname: ${spring.application.name}
+                #当前服务实体的名称
+                instance-id: ${spring.application.name}:${server.port}
+                #后续关联该服务的域名，eureka服务复制会使用到，通过该域名来判断是否复制
+                hostname: eurekaServer1
+            client:
+                service-url:
+                    #当此处hostname与上面的hostname相同时，会忽略不replica，所以此处需通过域名来区分是否当前eurekaServer
+                    defaultZone: http://hostname1:port/eureka, http://hostname2:port/eureka
+
+Client
+    1、导入spring-cloud-starter-netflix-eureka-client包
+       导入spring-boot-starter-web包（不导入会注册不上，可能与eureka服务通讯有关）
+    2、同server配置一致即可
