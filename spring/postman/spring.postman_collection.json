@@ -1,0 +1,322 @@
+{
+	"info": {
+		"_postman_id": "87c59305-9df7-4a71-84c1-b847a9d95f89",
+		"name": "spring",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "eurekaServer",
+			"item": [
+				{
+					"name": "eureka",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "cloud_config",
+			"item": [
+				{
+					"name": "加密",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "spring",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "spring",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "123",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{eurekaServer}}/eureka",
+							"host": [
+								"{{eurekaServer}}"
+							],
+							"path": [
+								"eureka"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "解密",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "AQCchm0sHWoDgDxLq0gZGUqbCegIq17dCvoaK6O7l0thcYNJe9h0wwMwwxm0Mo6xkFApTTZqCpN+4A7+/QLa3TL+fKY0Owig8O7OHNUZ0ZWs2z37fOJEzDmgm5Bm+mzVQ6r3Byu5nDpwFGhEvsaJyP2/2XZVJD+c7AxfsEiNMNWikxnbH2QWHHRLpYPrxPguLIsps5NyS+leymz2dauzTnGVAnCZuuCuIyvk7QdbQGnE9VEQaPauJ3+PelbFiC6nEXYPeBQpgJKhLANRTuhLsMkC2RFgKChgdVapwW2R6DkqONqrFHzsMvGzltf5yjPiHEJL6qMjRVuyQczFDSfrBiDOnrtZrH7dioHzpKizyzImbvObpN8fBkPcJvUPO8Q6954=",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{cloudconfigUrl}}/decrypt",
+							"host": [
+								"{{cloudconfigUrl}}"
+							],
+							"path": [
+								"decrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "actuator",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{cloudconfigUrl}}/actuator/health",
+							"host": [
+								"{{cloudconfigUrl}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "gateway",
+			"item": [
+				{
+					"name": "request",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "spring",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "spring",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user}}/GATEWAY/USER/show",
+							"host": [
+								"{{user}}"
+							],
+							"path": [
+								"GATEWAY",
+								"USER",
+								"show"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "actuator",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "spring",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "spring",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user}}/actuator/env",
+							"host": [
+								"{{user}}"
+							],
+							"path": [
+								"actuator",
+								"env"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "spring",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "spring",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{user}}/actuator/refresh",
+							"host": [
+								"{{user}}"
+							],
+							"path": [
+								"actuator",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{user}}/actuator/refresh",
+							"host": [
+								"{{user}}"
+							],
+							"path": [
+								"actuator",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "business",
+			"item": [
+				{
+					"name": "actuator",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{business}}/actuator/env",
+							"host": [
+								"{{business}}"
+							],
+							"path": [
+								"actuator",
+								"env"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "spring",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "spring",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{business}}/actuator/refresh",
+							"host": [
+								"{{business}}"
+							],
+							"path": [
+								"actuator",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "show",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{business}}/show",
+							"host": [
+								"{{business}}"
+							],
+							"path": [
+								"show"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
