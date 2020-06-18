@@ -2,6 +2,8 @@ Server
     1、导入spring-cloud-starter-netflix-eureka-server包
     2、@EnableConfigServer注解
     3、相关配置，需放在bootstrap配置文件里
+    4、判断是否eureka服务：appname，hostname相关
+    4、判断分区可用：appname，hostname，defaultZone相关
 
 Client
     1、导入spring-cloud-config-client包

@@ -1,0 +1,17 @@
+1、
+    1、导入spring-cloud-starter-gateway包
+    2、GatewayAutoConfiguration，自动启用
+    3、routePredicateHandlerMapping，核心
+2、
+    1、额外导入spring-cloud-starter-netflix-ribbon包
+    2、GatewayLoadBalancerClientAutoConfiguration
+    3、RibbonAutoConfiguration
+    4、RibbonClientConfiguration，
+        设置默认IRule，IPing，ServerList，ILoadBalancer，ServerListFilter
+        PropertiesFactory，定义配置！！
+    5、LoadBalancerAutoConfiguration
+    6、LoadBalancerInterceptorConfig，核心
+3、
+    1、额外导入spring-cloud-starter-netflix-eureka-client包
+    2、RibbonEurekaAutoConfiguration， EurekaRibbonClientConfiguration
+    3、替换IPing和ServerList

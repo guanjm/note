@@ -255,6 +255,8 @@ vi
 	:r [filename] 追加filename文件内容
 	:! [command] 在vi模式下执行shell命令
 
-	
-	
-	
+su - [command]
+/etc/sudoer (root使用visudo)
+    mysql             ALL =  (ALL)                  NOPASSWD        /usr/bin/bash,/usr/bin/sh
+      |                |       |                        |                |
+    需要获取权限的用户  主机名 以主机的什么用户来执行命令 是否需要输入密码 能够执行那些命令
