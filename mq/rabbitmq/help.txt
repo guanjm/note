@@ -1,17 +1,40 @@
 1、jdk的安装
+    1、下载压缩包：https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html
+    2、解压
+    3、配置环境变量
+        vi /etc/profile
+            export JAVA_HOME=/usr/local/jdk/jdk1.8.0_251
+            export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+            export PATH=$PATH:$JAVA_HOME/bin
+        source /etc/profile
+    4、检验是否成功
+        java -version
+        javac -version
+
 2、Erlang的安装
-    1、下载源代码：https://www.erlang.org/downloads
+    1、下载压缩包：https://www.erlang.org/downloads
     2、解压
     3、./configuration --prefix
-        yum install unixODBC-devel
-        yum install openssl-devel
-        yum install wxWidgets-devel
         yum install gcc-c++
-        yum install ncurses-devel
+        yum install perl
         yum install epel-release
-    4、make
-    5、make install
+        yum install ncurses-devel
+        yum install wxWidgets-devel
+        yum install openssl-devel
+        yum install unixODBC-devel
+    4、make && make install
+    5、配置环境变量
+        vi ~/.bash_profile
+           export RABBITMQ_HOME=/home/rabbitmq/rabbitmq_server-3.8.5
+           export PATH=$PATH:$RABBITMQ_HOME/sbin
+    6、检验是否成功
+        erl -version
+
 3、rabbitmq的安装
-    1、下载源代码：https://www.rabbitmq.com/download.html
+    1、下载压缩包：https://www.rabbitmq.com/download.html
     2、解压
-    3、
+    3、rabbitmq-server -detached 启动服务
+    4、配置管理页面
+        rabbitmq-plugins enable rabbitmq_management 启动管理插件
+        rabbitmqctl add_user admin admin    添加用户
+        rabbitmqctl set_user_tag admin administrator 添加角色
