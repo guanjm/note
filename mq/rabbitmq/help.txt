@@ -1,0 +1,17 @@
+1、jdk的安装
+2、Erlang的安装
+    1、下载源代码：https://www.erlang.org/downloads
+    2、解压
+    3、./configuration --prefix
+        yum install unixODBC-devel
+        yum install openssl-devel
+        yum install wxWidgets-devel
+        yum install gcc-c++
+        yum install ncurses-devel
+        yum install epel-release
+    4、make
+    5、make install
+3、rabbitmq的安装
+    1、下载源代码：https://www.rabbitmq.com/download.html
+    2、解压
+    3、
