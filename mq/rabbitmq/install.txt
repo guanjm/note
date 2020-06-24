@@ -37,7 +37,9 @@
         vi ~/.bash_profile
            export RABBITMQ_HOME=/home/rabbitmq/rabbitmq_server-3.8.5
            export PATH=$PATH:$RABBITMQ_HOME/sbin
-    4、rabbitmq-server -detached 启动服务
-    5、配置管理页面
+    4、配置文件
+        $RABBITMQ_HOME/etc/rabbit
+    5、rabbitmq-server -detached 启动服务
+    6、配置管理页面
         rabbitmq-plugins enable rabbitmq_management 启动管理插件
         需要重启rabbitmq服务

@@ -1,1 +1,7 @@
 常用命令：
+    rabbitmq-server detached                                                启动rabbitmq服务
+    rabbitmqctl stop                                                        停止rabbitmq服务
+    rabbitmqctl add_user [username] [password]                              添加用户
+    rabbitmqctl set_user_tags [username] [tag]                              添加用户角色
+    rabbitmqctl set_permissions [vhost] [username] [conf] [write] [read]    设置权限
+
