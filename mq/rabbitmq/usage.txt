@@ -4,4 +4,25 @@
     rabbitmqctl add_user [username] [password]                              添加用户
     rabbitmqctl set_user_tags [username] [tag]                              添加用户角色
     rabbitmqctl set_permissions [vhost] [username] [conf] [write] [read]    设置权限
+                 conf：队列，交换器，绑定等定义权限
+                 wirte：生产消息权限
+                 read：消费消息权限
+
+配置文件：
+    默认配置
+    $RABBIT_HOME/etc/rabbit/rabbitmq-env.conf
+        RABBITMQ_NODE_PORT=5672
+        RABBITMQ_DIST_PORT=RABBITMQ_NODE_PORT + 20000
+        RABBITMQ_NODENAME=rabbit@$HOSTNAME
+        RABBITMQ_USE_LONGNAME=false
+        RABBITMQ_CONFIG_FILE=$RABBITMQ_HOME/etc/rabbitmq/rabbitmq
+        ERL_EPMD_PORT=4369
+    $RABBIT_HOME/etc/rabbit/rabbitmq.conf
+        management.tcp.port=15672
+
+    epmd: [4369]
+    admq client：客户端tcp [5672], 客户端ssl [5671]
+    http api client：[15672]
+    Erlang distribution server port：[25672]
+    Erlang distribution client ports：[35672-35682]
 
