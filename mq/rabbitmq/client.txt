@@ -1,0 +1,7 @@
+ConnectionFactory:  设置连接配置
+AmqpAdmin: 用于定义交换机，队列，绑定器
+FanoutExchange：广播交换机
+DirectExchange：精准匹配交换机
+TopicExchange：规则匹配交换机，必须由（.）分割的单词列表
+                #通配符，代表零个或多个 [word] [word.] [word.s] [word.str] .可有可无
+                *通配符，代表单个 [word.] [word.c] 至少有.
