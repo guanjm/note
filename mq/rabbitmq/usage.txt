@@ -16,7 +16,7 @@
         RABBITMQ_NODENAME=rabbit@$HOSTNAME
         RABBITMQ_USE_LONGNAME=false
         RABBITMQ_CONFIG_FILE=$RABBITMQ_HOME/etc/rabbitmq/rabbitmq
-        ERL_EPMD_PORT=4369
+        ERL_EPMD_PORT=4369  All hosts in a cluster must use the same port！！！
     $RABBIT_HOME/etc/rabbit/rabbitmq.conf
         management.tcp.port=15672
 
