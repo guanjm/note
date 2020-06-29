@@ -4,7 +4,7 @@ FanoutExchange：广播交换机
 DirectExchange：精准匹配交换机
 TopicExchange：规则匹配交换机，必须由（.）分割的单词列表
                 #通配符，代表零个或多个 [word] [word.] [word.s] [word.str] .可有可无
-                *通配符，代表单个 [word.] [word.c] 至少有.
+                *通配符，代表零个或单个 [word.] [word.c] 至少有.
 
 persistent message:
     will be written to disk as soon as they reach the queue
@@ -22,3 +22,22 @@ memory cost:
     1、Each queue maintains some metadata for each unacknowledged message. The message itself can be removed from memory if its destination is the message store.
     2、The message store needs an index. The default message store index uses a small amount of memory for every message in the store.
 生产者消息确认
+
+
+
+Exchange：交换器
+    name: 名称
+    type：类型
+        fanout：广播
+        direct：精准匹配
+        topic：通配匹配
+    durable：持久化
+        true：服务重启后依然存在
+        false：服务重启后消失
+    autoDelete：自动删除
+        true：当该交换器不被只用会自动删除
+    arguments
+
+    delayed：延时，需插件
+    internal：内部的
+        true：只能用于交换器路由到交换器
