@@ -26,3 +26,7 @@
     Erlang distribution server port：[25672]
     Erlang distribution client ports：[35672-35682]
 
+必须有一个或者以上的硬盘节点
+exchange,user保存在所有节点
+queue，binding保存在对应的节点
+当消息为transient类型时，未来得及写入硬盘，重启对应队列对应节点会导致消息丢失

@@ -5,3 +5,20 @@ DirectExchange：精准匹配交换机
 TopicExchange：规则匹配交换机，必须由（.）分割的单词列表
                 #通配符，代表零个或多个 [word] [word.] [word.s] [word.str] .可有可无
                 *通配符，代表单个 [word.] [word.c] 至少有.
+
+persistent message:
+    will be written to disk as soon as they reach the queue
+    马上写入硬盘，同时也会写入内存，直到内存不足才会从内存中移除
+transient message:
+    will be written to disk only so that they can be evicted from memory while under memory pressure
+    直到内存不足才会被写入硬盘
+persistent layer:
+    1、queue index
+        The queue index is responsible for maintaining knowledge about where a given message is in a queue, along with whether it has been delivered and acknowledged. There is therefore one queue index per queue.
+        队列索引负责维护消息在队列中的位置以及该消息是否被传递和确认。
+    2、message store
+    当硬盘节点down掉时，
+memory cost:
+    1、Each queue maintains some metadata for each unacknowledged message. The message itself can be removed from memory if its destination is the message store.
+    2、The message store needs an index. The default message store index uses a small amount of memory for every message in the store.
+生产者消息确认
