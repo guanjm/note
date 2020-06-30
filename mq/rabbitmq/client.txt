@@ -35,9 +35,14 @@ Exchange：交换器
         true：服务重启后依然存在
         false：服务重启后消失
     autoDelete：自动删除
-        true：当该交换器不被只用会自动删除
+        true：当该交换器相关绑定全清除后，自动删除
+        false:
     arguments
-
-    delayed：延时，需插件
+        alternate-exchange：替换交换器
+            当消息推送该交换器路由失败时，使用此处设置的替换交换器
+    delayed：延时
+        true：服务需启动插件，否则报错
+        false：
     internal：内部的
-        true：只能用于交换器路由到交换器
+        true：限制只能通过其他交换器路由到该交换器，直接发消息到该交换器报错
+        false
