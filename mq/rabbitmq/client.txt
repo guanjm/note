@@ -23,10 +23,12 @@ memory cost:
     2、The message store needs an index. The default message store index uses a small amount of memory for every message in the store.
 生产者消息确认
 
-
+cluster_node_type:  集群节点类型
+    disc：硬盘 可以单独启动，内存节点的操作都会同步持久化到硬盘节点的数据库
+    ram：内存 不可单独启动，只有一台内存节点时，所有操作
 
 Exchange：交换器
-    name: 名称
+    name： 名称
     type：类型
         fanout：广播
         direct：精准匹配
@@ -36,7 +38,7 @@ Exchange：交换器
         false：服务重启后消失
     autoDelete：自动删除
         true：当该交换器相关绑定全清除后，自动删除
-        false:
+        false：
     arguments
         alternate-exchange：替换交换器
             当消息推送该交换器路由失败时，使用此处设置的替换交换器
@@ -45,4 +47,6 @@ Exchange：交换器
         false：
     internal：内部的
         true：限制只能通过其他交换器路由到该交换器，直接发消息到该交换器报错
-        false
+        false：
+
+
