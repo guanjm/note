@@ -24,8 +24,8 @@ memory cost:
 生产者消息确认
 
 cluster_node_type:  集群节点类型
-    disc：硬盘 可以单独启动，内存节点的操作都会同步持久化到硬盘节点的数据库
-    ram：内存 不可单独启动，只有一台内存节点时，所有操作
+    disc：硬盘
+    ram：内存
 
 Exchange：交换器
     name： 名称
