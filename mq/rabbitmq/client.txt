@@ -37,16 +37,46 @@ Exchange：交换器
         true：服务重启后依然存在
         false：服务重启后消失
     autoDelete：自动删除
-        true：当该交换器相关绑定全清除后，自动删除
+        true：当有队列或者交换器绑定，且全清除后，自动删除
         false：
-    arguments
-        alternate-exchange：替换交换器
-            当消息推送该交换器路由失败时，使用此处设置的替换交换器
     delayed：延时
         true：服务需启动插件，否则报错
         false：
     internal：内部的
         true：限制只能通过其他交换器路由到该交换器，直接发消息到该交换器报错
         false：
+    arguments
+        alternate-exchange：替换交换器
+            当消息推送该交换器路由失败时，使用此处设置的替换交换器
 
+Queue：队列
+    name：名称
+    type：类型
+        classic：经典
+        quorum：选举
+    durable：
+        true：持久的，信息写入内存同时写入硬盘，内存不够时从内存中移除
+        false：临时的，信息先写入内存，当内存不够时从内存中移除，写入硬盘，故存在节点重启数据丢失风险
+    autoDelete：
+        true：当有消费者连接，且全部断开后，自动删除
+        false：
+    actualName：DeclareO返回的名称
+    arguments：
+        x-message-ttl：消息生存时长 Number
+        x-expires：队列失效时长 Number
+        x-max-length：队列容纳消息长度，消息溢出移除队头信息 Number
+        x-max-length-bytes：队列总消息主体长度，消息过长移除队头信息 Number
+        x-overflow：溢出行为
+            drop-head：移除对头
+            reject-publish：拒绝发布
+            reject-publish-dlx：拒绝发布且拒绝发布死信
+        x-dead-letter-exchange：当消息被拒绝或过期重发布的交换器 String
+        x-dead-letter-routing-key：当消息是死信时的key，如果不设置使用原来的key String
+        x-single-active-consumer：只有一个消费者 Boolean
+        x-max-priority：队列优先级支撑的最大级别，如果不设置不支持队列优先级 Number
+        x-queue-mode：lazy 消息尽量写入硬盘减少内存的使用量，如果不设置会保持内存缓存以便更快传递 String
+        x-queue-master-locator：定位主队列在集群节点中位置的规则 String
+            min-masters：最少队列绑定
+            client-local：声明队列的客户端所连接的节点
+            random：随机
 
