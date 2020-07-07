@@ -60,6 +60,7 @@ Queue：队列
     autoDelete：
         true：当有消费者连接，且全部断开后，自动删除
         false：
+    exclusive：只有该队列声明的连接可以使用
     actualName：DeclareO返回的名称
     arguments：
         x-message-ttl：消息生存时长 Number
