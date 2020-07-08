@@ -81,3 +81,5 @@ Queue：队列
             client-local：声明队列的客户端所连接的节点
             random：随机
 
+publish
+
