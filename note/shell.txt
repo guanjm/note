@@ -256,11 +256,20 @@ bg, fg, jobs ,ctrl+c, ctrl+z, nohup, &
       nohup [command] &
 
 进程最大打开文件数：
-查看      ulimit -n
-临时修改   ulimit -n [count] **只对当前进程有效，退出shell变回默认**
+查看      ulimit -Hn
+临时修改   ulimit -Hn [count] **只对当前进程有效，退出shell变回默认**
+
+用户最大打开文件数：
 永久修改   vi /etc/security/limits.conf
-            * soft nofile [count]
+            * soft nofile [count] 最大文件描述符数量
             * hard nofile [count]
+            * soft nproc [count]  最大进程数
+            * hard nproc [count]
+            soft 警告值，hard 真正阈值
+
 系统最大打开文件数：
 查看      cat /proc/sys/fs/file-max
 临时修改    echo [count] > /proc/sys/fs/file-max
+永久修改  vi /etc/sysctl.conf
+            fs.file-max=[count]
+
