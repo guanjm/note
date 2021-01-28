@@ -254,3 +254,13 @@ bg, fg, jobs ,ctrl+c, ctrl+z, nohup, &
    nohup 用户断开终端继续运行
       nohup [command]
       nohup [command] &
+
+进程最大打开文件数：
+查看      ulimit -n
+临时修改   ulimit -n [count] **只对当前进程有效，退出shell变回默认**
+永久修改   vi /etc/security/limits.conf
+            * soft nofile [count]
+            * hard nofile [count]
+系统最大打开文件数：
+查看      cat /proc/sys/fs/file-max
+临时修改    echo [count] > /proc/sys/fs/file-max
