@@ -52,9 +52,9 @@
 >
 > ## 安装nginx
 > ```
->   wget http://nginx.org/download/nginx-1.15.4.tar.gz #下载nginx压缩包
->   tar -zxvf nginx-1.15.4.tar.gz #解压
->   cd nginx-1.15.4/
+>   wget http://nginx.org/download/nginx-1.18.0.tar.gz #下载nginx压缩包
+>   tar -zxvf nginx-1.18.0.tar.gz #解压
+>   cd nginx-1.18.0/
 >   #添加fastdfs-nginx-module模块
 >   ./configure --add-module=/usr/local/src/fastdfs-nginx-module/src/ 
 >   make && make install #编译安装

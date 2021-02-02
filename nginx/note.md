@@ -12,6 +12,28 @@
 > - 反向代理
 >   - 目标端（服务器） 通过服务器 代理接收或响应所要请求
 
+# 安装nginx
+> ```
+>   wget http://nginx.org/download/nginx-1.18.0.tar.gz  #下载nginx压缩包
+>   tar -zxvf nginx-1.18.0.tar.gz  #解压
+>   cd nginx-1.18.0  #进入nginx根目录
+>   make && make install  #编译安装
+> ```
+> ## 安装插件
+>   - 未安装nginx
+>   ```
+>       在make之前，进入nginx根目录
+>       ./configure --add-module=[moduleDir]  #add-module指定组件目录
+>   ```
+>   - 已安装nginx
+>   ```
+>       cd nginx-1.18.0  #进入nginx根目录
+>       ./configure --prefix=/usr/local/nginx  --add-module=[moduleDir]  ##prefix指定已安装好的nginx目录，add-module指定组件目录
+>       make  #不要make install！！当前目录的./objs/下面就会更新nginx启动文件
+>       cp ./objs/nginx /usr/local/nginx/sbin/nginx  #先停止nginx，再覆盖nginx 
+>       /usr/local/nginx/sbin/nginx  #启动nginx
+>   ```
+
 # nginx.conf
 > 1. user [userName] [groupName]  **指定运行用户或者用户组**  
 > 2. worker_processes [count]  **worker进程数，通常与CPU的数量相同**  
