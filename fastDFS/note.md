@@ -85,7 +85,7 @@
 >       base_path=/home/fastdfs/client
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >   
->   fdfs_upload_file [clientConfigPath] [filePath]  #保存后测试，返回id表示成功。
+>   fdfs_upload_file [clientConfigPath] [filePath]  #保存后测试，返回fileId表示成功。
 > ```
 > 
 > ## 配置nginx访问
@@ -108,7 +108,60 @@
 >           }
 >       }
 > ```
-> http://[ip]:[port]/[文件路径]  #测试下载，用外部浏览器访问已上传过的文件
+> http://[ip]:[port]/[fileId]  #测试下载，用外部浏览器访问已上传过的文件
+
+# 分布式部署
+> ## tracker配置（跟单机差不多）
+> ```
+>   vi /etc/fdfs/tracker.conf
+>       port=22122
+>       base_path=/home/fastdfs/tracker
+> ```
+> 
+> ## storage配置（跟单机差不多，就tracker_server参数配置多个）
+> ```
+>   vi /etc/fdfs/storage.conf
+>       port=23000
+>       base_path=/home/fastdfs/storage
+>       store_path0=/home/fastdfs/storage
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       http.server_port=8888  #http访问文件的端口（默认8888，看情况修改，和nginx中保护一致）
+> ```
+>
+> ## client测试（跟单机差不多，就tracker_server参数配置多个）
+> ```
+>   vi /etc/fdfs/client.conf
+>       base_path=/home/fastdfs/client
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>   
+>   fdfs_upload_file [clientConfigPath] [filePath]  #保存后测试，返回fileId表示成功。
+> ```
+> 
+> ## 配置nginx访问
+> ```
+>   vi /etc/fdfs/mod_fastdfs.conf
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
+>       url_have_group_name=true
+>       store_path0=/home/fastdfs/storage
+>   vi /usr/local/nginx/conf/nginx.conf
+>       server {
+>           listen 8888;
+>           server_name localhost;
+>           location ~/group[0-9]/ {
+>               ngx_fastdfs_module;
+>           }
+>           error_page 500 502 503 504 /50x.html;
+>           location = /50x.html {
+>               root html;  
+>           }
+>       }
+> ```
 
 # 启动
 > ## 防火墙
