@@ -66,15 +66,15 @@
 > ```
 >   vi /etc/fdfs/tracker.conf
 >       port=22122  #tracker服务器端口（默认22122，一般不修改）
->       base_path=/home/dfs  #存储日志和数据的根目录
+>       base_path=/home/fastdfs/tracker  #存储日志和数据的根目录
 > ```
 > 
 > ## storage配置
 > ```
 >   vi /etc/fdfs/storage.conf
 >       port=23000  #storage服务端口（默认23000，一般不修改）
->       base_path=/home/dfs  #数据和日志文件存储根目录
->       store_path0=/home/fds  #第一个存储目录
+>       base_path=/home/fastdfs/storage  #数据和日志文件存储根目录
+>       store_path0=/home/fastdfs/storage  #第一个存储目录
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       http.server_port=8888  #http访问文件的端口（默认8888，看情况修改，和nginx中保护一致）
 > ```
@@ -82,10 +82,10 @@
 > ## client测试
 > ```
 >   vi /etc/fdfs/client.conf
->       base_path=/home/fds
+>       base_path=/home/fastdfs/client
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >   
->   fdfs_upload_file /etc/fdfs/client.conf [filePath]  #保存后测试，返回id表示成功。
+>   fdfs_upload_file [clientConfigPath] [filePath]  #保存后测试，返回id表示成功。
 > ```
 > 
 > ## 配置nginx访问
@@ -119,17 +119,17 @@
 > 
 > ## tracker
 > ```
->   /etc/init.d/fdfs_trackerd start  #启动tracker服务
->   /etc/init.d/fdfs_trackerd restart  #重启tracker服务
->   /etc/init.d/fdfs_trackerd stop #停止tracker服务
+>   /usr/bin/fdfs_trackerd [trackerConfigPath] start  #启动tracker服务
+>   /usr/bin/fdfs_trackerd [trackerConfigPath] restart  #重启tracker服务
+>   /usr/bin/fdfs_trackerdd stop #停止tracker服务
 >   chkconfig fdfs_trackerd on #自启动tracker服务
 > ```
 > 
 > ## storage
 > ```
->   /etc/init.d/fdfs_storaged start  #启动storage服务
->   /etc/init.d/fdfs_storaged restart  #重动storage服务
->   /etc/init.d/fdfs_storaged stop  #停止动storage服务
+>   /usr/bin/fdfs_storaged [storageConfigPath] start  #启动storage服务
+>   /usr/bin/fdfs_storaged [storageConfigPath] restart  #重动storage服务
+>   /usr/bin/fdfs_storaged stop  #停止动storage服务
 >   chkconfig fdfs_storaged on  #自启动storage服务
 > ```
 >

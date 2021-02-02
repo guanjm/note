@@ -1,0 +1,5 @@
+docker pull nginx \
+&& docker run -d --name nginx_node1 \
+              -p 8081:80 \
+              -v $PWD/conf:/etc/nginx \
+              -v $PWD/html:/usr/nginx
