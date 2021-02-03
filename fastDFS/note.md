@@ -14,11 +14,13 @@
 > Storage Server会定期的向Tracker Server发送自己的存储信息。当Tracker Server Cluster中的Tracker Server不止一个时，各个Tracker之间的关系是对等的，所以客户端上传时可以选择任意一个Tracker。  
 > 当Tracker收到客户端上传文件的请求时，会为该文件分配一个可以存储文件的group，当选定了group后就要决定给客户端分配group中的哪一个storage server。当分配好storage server后，客户端向storage发送写文件请求，storage将会为文件分配一个数据存储目录。然后为文件分配一个fileid，最后根据以上的信息生成文件名存储文件。  
 > ![alt FastDFS上传流程图](resource/FastDFS上传流程图.png)
+> - fileId = storage server ip + 文件创建时间 + 文件大小 + 文件crc32 + 一个随机数
 >
 > ## FastDFS的文件同步
 > 写文件时，客户端将文件写至group内一个storage server即认为写文件成功，storage server写完文件后，会由后台线程将文件同步至同group内其他的storage server。  
 > 每个storage写文件后，同时会写一份binlog，binlog里不包含文件数据，只包含文件名等元信息，这份binlog用于后台同步，storage会记录向group内其他storage同步的进度，以便重启后能接上次的进度继续同步；进度以时间戳的方式进行记录，所以最好能保证集群内所有server的时钟保持同步。  
-> storage的同步进度会作为元数据的一部分汇报到tracker上，tracke在选择读storage的时候会以同步进度作为参考。
+> storage的同步进度会作为元数据的一部分汇报到tracker上，tracker在选择读storage的时候会以同步进度作为参考。
+> - 同group内，由源节点向其他节点同步
 >
 > ## FastDFS的文件下载
 > 跟upload file一样，在downloadfile时客户端可以选择任意tracker server。tracker发送download请求给某个tracker，必须带上文件名信息，tracke从文件名中解析出文件的group、大小、创建时间等信息，然后为该请求选择一个storage用来服务读请求。
@@ -100,8 +102,8 @@
 > ```
 >   vi /etc/fdfs/storage.conf
 >       port=23000  #storage服务端口（默认23000，一般不修改）
->       base_path=/home/fastdfs/storage  #数据和日志文件存储根目录
->       store_path0=/home/fastdfs/storage  #第一个存储目录
+>       base_path=/home/fastdfs/storage/base  #数据和日志文件存储根目录
+>       store_path0=/home/fastdfs/storage/data  #第一个存储目录
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       http.server_port=8888  #http访问文件的端口（默认8888，看情况修改，和nginx中保护一致）
 > ```
@@ -114,7 +116,7 @@
 >   
 >   fdfs_upload_file [clientConfigPath] [filePath]  #保存后测试，返回fileId表示成功。
 > ```
-> 返回的文件id由group、存储目录、两级子目录、fileId、文件后缀名拼接而成
+> 返回的文件id由group（卷/分组）、存储目录（store_path[number]存储路径）、两级子目录、文件名（具有一定信息）、文件后缀名拼接而成
 > group1/M00/00/00/sdfawfgafdgweqgawefawef.txt  
 > 
 > ## 配置nginx访问
@@ -122,7 +124,7 @@
 >   vi /etc/fdfs/mod_fastdfs.conf
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       url_have_group_name=true
->       store_path=/home/dfs
+>       store_path0=/home/fastdfs/storage/data
 >   
 >   vi  /usr/local/nginx/conf/nginx.conf
 >       server {
@@ -151,8 +153,8 @@
 > ```
 >   vi /etc/fdfs/storage.conf
 >       port=23000
->       base_path=/home/fastdfs/storage
->       store_path0=/home/fastdfs/storage
+>       base_path=/home/fastdfs/storage/base
+>       store_path0=/home/fastdfs/storage/data
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
@@ -177,7 +179,7 @@
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       tracker_server=[trackerServerIP]:[trackerServerPort]  #tracker服务器IP和端口
 >       url_have_group_name=true
->       store_path0=/home/fastdfs/storage
+>       store_path0=/home/fastdfs/storage/data
 >   vi /usr/local/nginx/conf/nginx.conf
 >       server {
 >           listen 8888;
@@ -269,4 +271,20 @@
 > 如果不是在/usr/local/src文件夹下安装 可能会编译出错
 > 如果 unknown directive "ngx_fastdfs_module" in /usr/local/nginx/conf/nginx.conf:151，可能是nginx一直是启动的，必须要重启nginx才可以，`nginx -s reload`无效。
 > 可通过base_path配置的路径查看日志
+
+# 遗留问题
+> 1. 断点上传下载
+> 2. 文件元数据（文件相关属性）
+> 3. 业务权限控制
+> 4. storage server 或者 tracker server 故障
+> 5. nginx下载文件-文件名问题
+>   - nginx添加配置
+>       ```
+>           vi /usr/local/nginx/conf/nginx.conf
+>               location ~/group[0-9]/ {
+>               add_header Content-Disposition "attachment;filename=$arg_attname";  #在fastDFS组件前添加
+>               ngx_fastdfs_module;
+>           }
+>       ```
+> 6. 大图小图
 >
