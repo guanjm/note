@@ -94,7 +94,7 @@
 >     ---> 9720a901bc2e
 >    Successfully built 9720a901bc2e
 > ```
-> ![alt docker分层](/docker/resource/docker_layer.jpg)  
+> ![alt docker分层](resource/docker_layer.jpg)  
 > 在构建docker镜像时，可看到每执行一步命令都会有一个id，这个id是docker的临时镜像id。    
 > 这个临时镜像只会用于镜像的构建，而不能用于启动或其他功能。  
 > 每个id都为一个临时镜像，所以每步命令都会生成一个临时镜像（只读层），不过当有相同的命令时，会using cache。  

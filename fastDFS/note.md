@@ -1,3 +1,29 @@
+# FastDFS
+> FastDFS 是一个开源的高性能分布式文件系统（DFS）。 它的主要功能包括：文件存储，文件同步和文件访问，以及高容量和负载平衡。主要解决了海量数据存储问题，特别适合以中小文件（建议范围：4KB < file_size <500MB）为载体的在线服务。  
+> FastDFS 系统有三个角色：跟踪服务器(Tracker Server)、存储服务器(Storage Server)和客户端(Client)。
+>   - Tracker Server：跟踪服务器，主要做调度工作，起到均衡的作用；负责管理所有的 storage server和 group，每个 storage 在启动后会连接 Tracker，告知自己所属 group 等信息，并保持周期性心跳。
+>   - Storage Server：存储服务器，主要提供容量和备份服务；以 group 为单位，每个 group 内可以有多台 storage server，数据互为备份。
+>   - Client：客户端，上传下载数据的服务器，也就是我们自己的项目所部署在的服务器。
+> ![alt FastDFS架构图](resource/FastDFS架构图.png)  
+>
+> ## FastDFS的存储策略
+> - 为了支持大容量，存储节点（服务器）采用了分卷（或分组）的组织方式。存储系统由一个或多个卷组成，卷与卷之间的文件是相互独立的，所有卷的文件容量累加就是整个存储系统中的文件容量。一个卷可以由一台或多台存储服务器组成，一个卷下的存储服务器中的文件都是相同的，卷中的多台存储服务器起到了冗余备份和负载均衡的作用。  
+> - 在卷中增加服务器时，同步已有的文件由系统自动完成，同步完成后，系统自动将新增服务器切换到线上提供服务。当存储空间不足或即将耗尽时，可以动态添加卷。只需要增加一台或多台服务器，并将它们配置为一个新的卷，这样就扩大了存储系统的容量。
+>
+> ## FastDFS的上传过程
+> Storage Server会定期的向Tracker Server发送自己的存储信息。当Tracker Server Cluster中的Tracker Server不止一个时，各个Tracker之间的关系是对等的，所以客户端上传时可以选择任意一个Tracker。  
+> 当Tracker收到客户端上传文件的请求时，会为该文件分配一个可以存储文件的group，当选定了group后就要决定给客户端分配group中的哪一个storage server。当分配好storage server后，客户端向storage发送写文件请求，storage将会为文件分配一个数据存储目录。然后为文件分配一个fileid，最后根据以上的信息生成文件名存储文件。  
+> ![alt FastDFS上传流程图](resource/FastDFS上传流程图.png)
+>
+> ## FastDFS的文件同步
+> 写文件时，客户端将文件写至group内一个storage server即认为写文件成功，storage server写完文件后，会由后台线程将文件同步至同group内其他的storage server。  
+> 每个storage写文件后，同时会写一份binlog，binlog里不包含文件数据，只包含文件名等元信息，这份binlog用于后台同步，storage会记录向group内其他storage同步的进度，以便重启后能接上次的进度继续同步；进度以时间戳的方式进行记录，所以最好能保证集群内所有server的时钟保持同步。  
+> storage的同步进度会作为元数据的一部分汇报到tracker上，tracke在选择读storage的时候会以同步进度作为参考。
+>
+> ## FastDFS的文件下载
+> 跟upload file一样，在downloadfile时客户端可以选择任意tracker server。tracker发送download请求给某个tracker，必须带上文件名信息，tracke从文件名中解析出文件的group、大小、创建时间等信息，然后为该请求选择一个storage用来服务读请求。
+> ![alt FastDFS下载流程图](resource/FastDFS下载流程.png)
+
 # FastDFS安装  [wiki](https://github.com/happyfish100/fastdfs/wiki)
 > ## 使用的系统软件
 > | 名称 | 说明 |
@@ -87,6 +113,8 @@
 >   
 >   fdfs_upload_file [clientConfigPath] [filePath]  #保存后测试，返回fileId表示成功。
 > ```
+> 返回的文件id由group、存储目录、两级子目录、fileId、文件后缀名拼接而成
+> group1/M00/00/00/sdfawfgafdgweqgawefawef.txt  
 > 
 > ## 配置nginx访问
 > ```
@@ -197,6 +225,32 @@
 > ```
 >   /usr/bin/fdfs_monitor /etc/fdfs/storage.conf  #会显示会有几台服务器，有三台就会显示Storage 1-Storage 3 的详细信息
 > ```
+
+# 权限控制
+> FastDFS的权限控制是在服务端开启token验证，客户端根据文件名、当前unix时间戳、秘钥获取token，在地址中带上token参数即可通过http方式访问文件。
+> 1. 服务端开启token验证
+>   ```
+>       vi /etc/fdfs/http.conf
+>           http.anti_steal.check_token=true  #开启token验证
+>           http.anti_steal.token_ttl=[second]  #设置token失效时间
+>           http.anti_steal.secret_key=[secert]  #密钥，跟客户端配置文件的fastdfs.http_secert_ley保持一致
+>           http.anti_steal.token_check_fail=[filePath]  #token校验失败，返回页面
+>   ```
+> 2. 配置客户端
+>   ```
+>       vi /etc/fdfs/client.conf
+>           fastdfs.http_anti_steal_token=true  #开启token验证
+>           fastdfs.http_secret_key=[secert]  #密钥，跟服务器配置文件的http.anti_steal.secret_key保持一致
+>   ```
+> 3. 客户端生成token
+>   访问文件需要带上生成的token以及unix时间戳，所以返回的token是token和时间戳的拼接  
+>   ```
+>       ts = Instant.now().getEpochSecond();
+>       token = ProtoCommon.getToken(getFilename(filepath), ts, httpSecretKey);
+>   ```
+>   fileId?token=[token]&ts=[timestamp]
+> 4. 注意问题
+>   - 服务器时间是否一致
 
 # 说明
 > ## 配置文件
