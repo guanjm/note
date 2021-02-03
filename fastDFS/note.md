@@ -42,9 +42,10 @@
 > | 说明 | 位置 |
 > | --- | --- |
 > | 所有安装包 | /usr/local/src |
-> | 数据存储位置 | /home/dfs |
+> | 数据存储位置 | /home/fastdfs |
+> | 配置路径 | /etc/fdfs |
 > ```
->   mkdir /home/dfs  #创建数据存储目录
+>   mkdir /home/fastdfs  #创建数据存储目录
 >   cd /usr/loacl/src  #切换到安装目录准备下载安装包
 > ```
 > 
