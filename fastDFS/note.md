@@ -23,7 +23,7 @@
 > - 同group内，由源节点向其他节点同步
 >
 > ## FastDFS的文件下载
-> 跟upload file一样，在downloadfile时客户端可以选择任意tracker server。tracker发送download请求给某个tracker，必须带上文件名信息，tracke从文件名中解析出文件的group、大小、创建时间等信息，然后为该请求选择一个storage用来服务读请求。
+> 跟upload file一样，在downloadfile时客户端可以选择任意tracker server。tracker发送download请求给某个tracker，必须带上文件名信息，tracke从文件名中解析出文件的group、大小、创建时间等信息，然后为该请求选择一个storage用来服务读请求。  
 > ![alt FastDFS下载流程图](resource/FastDFS下载流程.png)
 
 # FastDFS安装  [wiki](https://github.com/happyfish100/fastdfs/wiki)
@@ -257,20 +257,20 @@
 
 # 说明
 > ## 配置文件
-> tracker_server #有几台服务器写几个
-> group_name #地址的名称的命名
-> bind_addr #服务器ip绑定
-> store_path_count #store_path(数字)有几个写几个
-> store_path(数字) #设置几个储存地址写几个 从0开始
+> tracker_server #有几台服务器写几个  
+> group_name #地址的名称的命名  
+> bind_addr #服务器ip绑定  
+> store_path_count #store_path(数字)有几个写几个  
+> store_path(数字) #设置几个储存地址写几个 从0开始  
 >
 > ## 可能遇到的问题
-> 如果不是root 用户 你必须在除了cd的命令之外 全部加sudo
-> 如果不是root 用户 编译和安装分开进行 先编译再安装
-> 如果上传成功 但是nginx报错404 先检查mod_fastdfs.conf文件中的store_path0是否一致
-> 如果nginx无法访问 先检查防火墙 和 mod_fastdfs.conf文件tracker_server是否一致
-> 如果不是在/usr/local/src文件夹下安装 可能会编译出错
-> 如果 unknown directive "ngx_fastdfs_module" in /usr/local/nginx/conf/nginx.conf:151，可能是nginx一直是启动的，必须要重启nginx才可以，`nginx -s reload`无效。
-> 可通过base_path配置的路径查看日志
+> 如果不是root 用户 你必须在除了cd的命令之外 全部加sudo  
+> 如果不是root 用户 编译和安装分开进行 先编译再安装  
+> 如果上传成功 但是nginx报错404 先检查mod_fastdfs.conf文件中的store_path0是否一致  
+> 如果nginx无法访问 先检查防火墙 和 mod_fastdfs.conf文件tracker_server是否一致  
+> 如果不是在/usr/local/src文件夹下安装 可能会编译出错  
+> 如果 unknown directive "ngx_fastdfs_module" in /usr/local/nginx/conf/nginx.conf:151，可能是nginx一直是启动的，必须要重启nginx才可以，`nginx -s reload`无效。  
+> 可通过base_path配置的路径查看日志  
 
 # 遗留问题
 > 1. 断点上传下载
