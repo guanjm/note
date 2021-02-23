@@ -273,3 +273,6 @@ bg, fg, jobs ,ctrl+c, ctrl+z, nohup, &
 永久修改  vi /etc/sysctl.conf
             fs.file-max=[count]
 
+centos8：
+    1、默认无network.service（可安装），通过/etc/sysconfig/network-script/目录下，nmcli来管理网卡配置。
+

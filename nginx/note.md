@@ -130,3 +130,7 @@
 
 
 # openssl
+
+# 清nginx缓存
+> - 可直接删除硬盘上缓存文件来实现清nginx缓存，不过硬盘上的缓存文件不可读，无发精确删除某个文件缓存
+> - 通过nginx插件清缓存：ngx_cache-purge-xxx.tar.gz
