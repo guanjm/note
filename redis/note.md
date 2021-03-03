@@ -59,14 +59,14 @@
     yum install make gcc
     make  #编译，该目录下有Makefile文件才能编译，编译后src目录下生成可执行文件
       make distclean  #make失败时清除文件
-    make install PREFIX=/opt/bin/redis  #安装redis，其实就把可执行文件复制到设定目录/opt/src/redis/redis-6.2.1/src
+    make install PREFIX=/opt/bin/redis  #安装redis，其实就把可执行文件复制到设定目录/opt/bin/redis
     vi /etc/profile  #添加环境变量
-      export REDIS_HOME=/opt/src/redis/redis-6.2.1/src
+      export REDIS_HOME=/opt/bin/redis
       export PATH=$PATH:$REDIS_HOME/bin
     source /etc/profile
     cd /opt/src/redis/redis-6.2.1/utils
     # 生成redis实例并配置注册服务（service redis_[port] stop/start/status）:
-    #   1、在/etc/init.d目录下生成启动脚本
+    #   1、在/etc/init.d目录下生成启动脚本redis_[port]
     #   2、添加开机启动chkconfig
     ./instal_server.sh
       [port]  #端口
