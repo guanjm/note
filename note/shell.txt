@@ -275,4 +275,6 @@ bg, fg, jobs ,ctrl+c, ctrl+z, nohup, &
 
 centos8：
     1、默认无network.service（可安装），通过/etc/sysconfig/network-script/目录下，nmcli来管理网卡配置。
-
+    2、Failed to set locale, defaulting to C.UTF-8 问题解决方案
+        echo "export LC_ALL=en_US.UTF-8"  >>  /etc/profile
+        source /etc/profile
