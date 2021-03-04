@@ -92,3 +92,51 @@
 > - 存映射文件（mmap）
 >   - 将一个文件或者其他对象映射到进程空间，实现文件磁盘地址和进程虚拟地址空间中的一段虚拟地址映射关系
 >   - 进程直接采用指针的方式读写操作这段内存，系统会自动写回脏页到硬盘上，避免了read，write的系统调用。
+
+# redis常用
+> string 
+>   - string 字符串
+>       - set [key] [value] [EX seconds|PX milliseconds] [NX|XX]  #EX：过期时间（秒），PX：过期时间（毫秒），NX：key不存在才设置，XX：key存在才设置
+>       - get [key] [value]
+>       - mSet [[key] [value]] [[key] [value]]  #批量设置
+>       - mGet [key] [key]  #批量查询
+>       - append [key] [value]  #追加
+>       - setRange [key] [offset] [value]
+>       - getRange [key] [start] [end]
+>       - strLen [key]  #获取value长度（字节数）
+>   - integer 数值
+>       - incr [key]
+>       - incrBy [key] [increment]
+>       - incrByFloat [key] [increment]
+>       - decr [key]
+>       - decrBy [key] [decrement]
+>       - 场景
+>           - 抢购，秒杀，详情页，点赞，评论（数据精确度不高的），规避并发下对数据库的事务操作
+>   - bit 二进制
+>       - setBit [key] [offset] [value]  #设置二进制，其中[offset]为二进制序号
+>       - bitPos [key] [bit:0|1] [start] [end]  #返回value的二进制为[bit]的第一个二进制序号，其中[start]和[end]是value的字节序号，返回的值为整个value的二进制序号，而不是在指定范围内的二进制序号
+>       - bitCount [key] [start] [end]  #返回value的二进制为‘1’的数量，其中[start]和[end]是value的字节序号
+>       - bitOp [operation:and|or] [destKey] [key...]  #对多个key做位运算，[operation]为位运算符，[destKey]为目标key
+>       - 场景
+>           - 用户每天登录记录，key为用户维度，value的二进制位标记为‘1’时为某天已登录，可记录用户全部登录记录。
+>           - 用户活跃度，key为日期维度，value的二进制位标记为‘1’时为某个用户已登录（用户与二进制位作映射），可记录某天全部用户登录记录。
+>       
+
+# redis
+> - ```type``` 数据类型
+>   - 通过```type [key]```命令，返回当前这个key的value所属数据类型，5大类型（string，list，hash，set，sorted set）
+> - ```object [subcommand]```
+>   - ```encoding``` 编码类型
+> - 支持正负索引：“ok!”字符串的索引，‘o’=[0|-3],‘k’=[1|-2],‘!’=[2|-1]，其中0为正序起始，-1为倒序起始
+> - 二进制安全
+>   - redis通过字节流来存储数据
+>   - 字符串：在终端```set [key] [中文]```，再```get [key]```时，返回的是十六进制，不过用客户端```redis-cli --raw```时，会自动转译为中文（字符集跟当前终端设置的字符集有关）
+>   - 数值：不同的语言存储的数值字节数不同，所以redis直接通过一个字节记录一位数值。（9999，strLen为4）
+> - 原子性
+>   - ```
+>       mSetNX key1 1 key2 2 => 1
+>       mGet key1 key2 => 1 2
+>       mSetNX key2 22 key3 3 => 0
+>       mGet key1 key2 key3 => 1 2 nil
+>     ```  
+>       mSetNX命令中key3操作失败，导致key3操作也失败，整个操作都会操作失败
