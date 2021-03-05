@@ -94,11 +94,12 @@
 >   - 进程直接采用指针的方式读写操作这段内存，系统会自动写回脏页到硬盘上，避免了read，write的系统调用。
 
 # redis常用
-> string 
+> - string 
+>   - key：type，encoding
 >   - string 字符串
 >       - set [key] [value] [EX seconds|PX milliseconds] [NX|XX]  #EX：过期时间（秒），PX：过期时间（毫秒），NX：key不存在才设置，XX：key存在才设置
 >       - get [key] [value]
->       - mSet [[key] [value]] [[key] [value]]  #批量设置
+>       - mSet [[key] [value] ...]  #批量设置
 >       - mGet [key] [key]  #批量查询
 >       - append [key] [value]  #追加
 >       - setRange [key] [offset] [value]
@@ -111,7 +112,7 @@
 >       - decr [key]
 >       - decrBy [key] [decrement]
 >       - 场景
->           - 抢购，秒杀，详情页，点赞，评论（数据精确度不高的），规避并发下对数据库的事务操作
+>           - 抢购，秒杀，点赞，评论（数据精确度不高的），规避并发下对数据库的事务操作
 >   - bit 二进制
 >       - setBit [key] [offset] [value]  #设置二进制，其中[offset]为二进制序号
 >       - bitPos [key] [bit:0|1] [start] [end]  #返回value的二进制为[bit]的第一个二进制序号，其中[start]和[end]是value的字节序号，返回的值为整个value的二进制序号，而不是在指定范围内的二进制序号
@@ -120,7 +121,66 @@
 >       - 场景
 >           - 用户每天登录记录，key为用户维度，value的二进制位标记为‘1’时为某天已登录，可记录用户全部登录记录。
 >           - 用户活跃度，key为日期维度，value的二进制位标记为‘1’时为某个用户已登录（用户与二进制位作映射），可记录某天全部用户登录记录。
->       
+> - list 列表（双向链表，插入有序）
+> - key：type，encoding，head，tail
+>       - lPush [key] [value...]  #链表前（左）插入
+>       - rPush [key] [value...]  #链表后（右）插入
+>       - lPop [key] [count] #链表前（左）弹出
+>       - rPop [key] [count] #链表后（右）弹出
+>       - lRange [key] [start] [end]
+>       - lIndex [key] [index]  #获取链表目标序号的元素，nil
+>       - lSet [key] [index] [element]  #设置链表目标序号的元素，index out of range
+>       - lRem [key] [count] [element]  #移除链表目标元素，[element]目标元素，[count]删除的数量(可正负，正：前（左）开始，负：后（右）开始)
+>       - lInsert [key] [before|after] [pivot] [element]  #链表前（左）开始以第一个[pivot]元素（精确元素，非链表序号）为支点，在[before|after]的位置，添加一个[element]
+>       - lLen [key]
+>       - lTrim [key] [start] [end] #去掉链表从[start]到[end]之外的元素，只保留链表从[start]到[end]的元素
+>       - blPop [key...] [timeout]  #阻塞弹出，[timeout]超时时间，0时永久
+>       - 场景
+>           - 栈，同向链表操作，lPush + lPop
+>           - 队列，反向链表操作，lPush + rPop
+>           - 数组，lIndex + ISet
+>           - 阻塞队列，blPop
+> - hash 散列
+>       - hSet [key] [[field] [value]...]
+>       - hGet [key] [field...]
+>       - hDel [key] [field...]
+>       - hLen [key]
+>       - hExists [key] [field]
+>       - hKeys [key]  #所有field值
+>       - hVals [key]  #所有value值
+>       - hGetAll [key]  #所有field和value值
+>       - hIncrBy [key] [field] [increment]
+>       - 场景
+>           - 商品详情页（点赞，收藏）
+> - set 集合（无序，去重）
+>       - sAdd [key] [member...]  #添加
+>       - sPop [key] [count]  #随机弹出
+>       - sMembers [key]  #获取所有
+>       - sCard [key]  #获取数量
+>       - sRem [key] [member...]
+>       - sInter [key...]  #多个set交集
+>       - sInterStore [destination] [key...]  #多个set交集，并储存在key为[destination]的集合里
+>       - sUnion [key...]  #多个set并集
+>       - sDiff [key...]  #多个set的差集，按key的传参顺序来决定左差还是右差
+>       - sRandMember [key] [count]  #随机，[count]随机数的数量（正：不能超过集合数量，不可重复，负：可超出集合数量，可重复）
+>       - 场景
+>           - 集合操作
+>           - 随机事件，抽奖
+> - sorted_set 有序集合（有序，去重）
+>       - 底层数据结构
+>           - skipList 跳跃表
+>       - 排序：score，排序依据。score相同时，以名称的字典顺序。物理排序：左小右大（从小到大）。当分值变化，物理排序才变化。
+>       - zAdd [key] [[score] [member]...]
+>       - zRange [key] [start] [end] [withScores]
+>       - zRangeByScore [key] [mix] [max]
+>       - zScore [key] [member]  #数据的分值
+>       - zRank [key] [member]  #数据的排名
+>       - zIncrBy [key] [increment] [member]  #提升数据分值
+>       - zUnionStore [destination] [keyNumber] [key...] [weights [weight...]]  #交集，[keyNumber]key的数量，[key...]多个集合，[weight...]多个集合的依次权重（默认都为1），[aggregate [sum|min|max]]分值合并的统计（默认sum）
+>       - 场景
+>           - 榜单
+>           - 集合操作，需要权重/聚合命令
+>
 
 # redis
 > - ```type``` 数据类型
