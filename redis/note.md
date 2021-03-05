@@ -180,6 +180,14 @@
 >       - 场景
 >           - 榜单
 >           - 集合操作，需要权重/聚合命令
+> - pubsub 发布/订阅
+>       - 场景
+>           - IM（即时通讯）
+>               - 发送消息 client(IM APP) => publish => redis-server
+>               - 实时消息 redis-server => subscribe => client(IM APP)
+>               - 历史消息
+>                   - 近期内 redis-server => subscribe => redis-server(sorted set)
+>                   - 更多历史数据 redis-server => subscribe => kafka => database
 >
 
 # redis
