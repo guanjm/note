@@ -254,7 +254,12 @@
 
 # module
 > - redisBloom 布隆过滤器
-> - ```redis-server --loadmodule [moduleAbsolutePath] [configPath]```
+>   - 安装
+>       - 命令启动```redis-server --loadmodule [moduleAbsolutePath] [configPath]```
+>       - 配置文件启动```vi /etc/redis/6379.conf  loadmodule /path/to/xxx.so```
+>   - 场景
+>       - 数据库数据不存在，布隆过滤被穿透了，需要在redis中添加标记
+>       - 数据库新增元素，需要添加到布隆过滤器里 
 
 # 延伸
 > - 过滤器
@@ -267,3 +272,28 @@
 >       - 原理：两张表，两个hash函数，当新数据加时，计算这个数据在两张表的位置，如果其中一张表的数据为空，则存入表中。  
 >           当两张表都不为空，随机踢出其中一个表上原有数据并存入，这个原有数据通过另外的hash函数计算另外一张表的位置，循环操作直到能存入数据。  
 >           若有数据不断提出，形成循环，代表达到极限，需要将hash函数优化或hash表扩容。
+
+# redis定位
+> - 缓存
+>   - 特点：1、数据“不重要”，2、存放热数据（非全量），3、动态更新
+>   - 瓶颈：内存有限
+>   - 解决方案：
+>       - key有效期
+>           - 访问key不会延长有效期```get key```
+>           - 发生写，会剔除有效期```set key```
+>           - 相关命令
+>               - ```ttl [key] -1:永久，-2：已过期```
+>               - ```expire [key] [second] 设置有效期时长```
+>               - ```expireat [key] [timestamp] 设置有效期```
+>           - 过期有两种方式：被动和主动
+>               - 主动，访问时发现过期
+>               - 被动：1、每10秒随机测试20个key进行过期检测，2、删除已经过期的key，3、如果多于25%的key过期，重复步骤1
+>       - 设置最大内存 ```maxmemory [bytes]```
+>       - 设置淘汰策略 ```maxmemory-policy [policy]```
+>           - allKey 全部key 
+>           - volatile 设置了过期时间的
+>           - lru least recently used 最近最少使用（时间久远）
+>           - lfu least frequently used 最不常使用（频率少）
+>           - random 随机
+>           - volatile-ttl 最快过期的（时间复杂度大，少用）
+>           - noeviction 不删除（redis用于数据库）
