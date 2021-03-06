@@ -181,13 +181,30 @@
 >           - 榜单
 >           - 集合操作，需要权重/聚合命令
 > - pubsub 发布/订阅
+>       - publish [channel] [message]  #发布消息
+>       - subscribe [channel...]  #订阅频道
+>       - pSubscribe [pattern...]  #订阅匹配频道
+>       - unsubscribe [channel...]  #取消订阅
+>       - pUnsubscribe [pattern]  #取消订阅匹配频道
+>       - pubsub [subCommand] [argument]  #分析发布/订阅
 >       - 场景
 >           - IM（即时通讯）
 >               - 发送消息 client(IM APP) => publish => redis-server
 >               - 实时消息 redis-server => subscribe => client(IM APP)
 >               - 历史消息
->                   - 近期内 redis-server => subscribe => redis-server(sorted set)
+>                   - 近期内 redis-server => subscribe => redis-server(sorted set)，score：时间，member：内容
 >                   - 更多历史数据 redis-server => subscribe => kafka => database
+> - transaction 事务
+>       - multi  #标记事务开始，只做标记，不执行命令
+>       - exec  #执行事务，执行失败回滚。当多个客户端同时发起事务，谁先执行exec，谁事务先执行。
+>       - discard  #放弃事务
+>       - watch [key...]  #观察[key]是否被更改，直到执行multi/exec命令，若有更改，事务不执行
+>       - unwatch  #忘记之前所有的[key]
+>       - 场景
+>           - client1 ```multi get k1 exec``` 
+>           - client2 ```multi del k1 exec```
+>           - status1 ```(1)multi (2)multi (2)del k1 (1)get k1 (2)exec (1)exec```，client1 获取nil（先client2，再client1）
+>           - status2 ```(1)multi (2)multi (2)del k1 (1)get k1 (1)exec (2)exec```，都执行成功（先client1，再client2）
 >
 
 # redis
@@ -208,3 +225,45 @@
 >       mGet key1 key2 key3 => 1 2 nil
 >     ```  
 >       mSetNX命令中key3操作失败，导致key3操作也失败，整个操作都会操作失败
+>
+
+# pipelining(管道)
+> - 客户端-服务端模型，TCP请求/响应协议
+> - 能实现处理新的请求即使旧的请求还未被响应=>多个命令发送到服务器，不用等待回复，最后在一个步骤中读取该答复。
+> - POP3协议已实现支持这个管道功能，大大加快了从服务器下载新邮件的过程
+> - 使用管道发送命令时，服务器讲被迫回复一个队列答复，占用很多内存。因此发大量的命令时，最好按照合理数量分批次的处理。
+> - ```shell script
+>       echo -e "set key1 1\nincr key1\nget key1" | nc localhost 6379
+>   ```
+
+# redis大量数据插入
+> - Luke协议
+>   - 常规redis命令集文件（redis-command.file） 
+>   - ```（cat redis-command.file；sleep 10）| nc localhost 6379 > /dev/null```不可靠方式，不能检查错误
+>   - ```cat redis-command.file | redis-cli --pipe```pipe模式（2.6开始），有效输出错误
+> - redis协议
+>   - 尽可能快地发送数据到数据库
+>   - 读取数据同时解析它
+>   - 一旦没有更多数据的输出，它就会发一个特殊的ECHO命令，后面跟着20个随机的字符。
+>   - 一旦这个特殊命令发出，收到的答复开始匹配这20个字符。当匹配成功就退出。
+
+# 事务（不完整，不支持回滚）
+> - multi 命令只标记事务开始，不会执行，（写入的命令，都放到一个缓存队列里）
+> - exec 多个事务，谁先执行exec，谁事务里的命令优先执行。（拿取缓存队列里的命令依次执行）
+> - watch 检测目标key的值是否有改变（ABA也算），若有改变接下一次事务不执行
+
+# module
+> - redisBloom 布隆过滤器
+> - ```redis-server --loadmodule [moduleAbsolutePath] [configPath]```
+
+# 延伸
+> - 过滤器
+>   - bloom filter
+>       - 原理：一个随机数，k个hash函数，一个一维（0|1）数组。随机数经过k个hash函数的映射，得到k个索引，在数组中把k个位置置为1。
+>       - 缺点：1、无法删除，2、误报（不存在误以为存在，k个hash同时碰撞）
+>   - counting bloom filter
+>       - 原理：在bloom filter基础上，（0|1）数组变为counter数组，添加时counter+1，删除时counter-1。
+>   - cuckoo filter布谷鸟过滤器
+>       - 原理：两张表，两个hash函数，当新数据加时，计算这个数据在两张表的位置，如果其中一张表的数据为空，则存入表中。  
+>           当两张表都不为空，随机踢出其中一个表上原有数据并存入，这个原有数据通过另外的hash函数计算另外一张表的位置，循环操作直到能存入数据。  
+>           若有数据不断提出，形成循环，代表达到极限，需要将hash函数优化或hash表扩容。

@@ -13,6 +13,9 @@ unalias var1
 ~/.bashrc: 该文件包含专用于你的bash shell的bash信息,当登录时以及每次打开新的shell时,该文件被读取.
 /proc 目录不存在真实的磁盘路径，是文件系统将系统信息抽象出来的信息。因为该目录下的数据地址都是固定好的，只能修改，不能填加，因此如果使用vi命令操作时，会产生临时文件，系统无法分配内存。只能通过echo命令往里面存。
 
+/etc/sysconfig/network-scripts/ifcfg-XXX
+nmcli c [down/up] [网卡号] 重启网络
+
 echo 最后默认加上换行符
     -n 不换行
     -e 解释转义字符（使用\c来不换行）
@@ -266,5 +269,15 @@ su - [command]
     mysql             ALL =  (ALL)                  NOPASSWD        /usr/bin/bash,/usr/bin/sh
       |                |       |                        |                |
     需要获取权限的用户  主机名 以主机的什么用户来执行命令 是否需要输入密码 能够执行那些命令
+
+yum (/etc/yum.repos.d)
+    check-update
+    update
+    install [packageName]
+    update [packageName]
+    list
+    remove
+    search
+yum-config-manager
 
 du -su *  #查看当前目录的文件大小
