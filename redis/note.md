@@ -366,7 +366,7 @@
 >   - AKF
 >       - X：水平复制：服务镜像
 >       - Y: 功能拆分：业务服务
->       - Z: 用户信息：数据分区
+>       - Z: 用户信息：数据分区（数据分治：聚合操作，事务很难实现）
 >   - 数据一致性问题
 >       - 强一致性：所有节点同步阻塞复制数据直到全部一致。破坏可用性：其中一个节点有问题，服务不可用。
 >       - 弱一致性：备机节点异步复制主机节点数据。存在复制失败丢失数据。
@@ -387,22 +387,79 @@
 >       1. master和slave连接正常时，master会发送一连串的命令来保持对slave的更新，以便将自身的数据集的改变复制给slave。
 >       2. 当master和slave断开连接后，slave重新连上master并尝试进行部分重同步：尝试只获取断开连接期间内丢失的命令流。
 >       3. 当无法进行部分重同步时，slave会请求进行全量同步：master创建所有数据快照，之后发送给slave，之后的数据集更改时持续发命令流到slave。
+>       4. master会把最近的命令往一个队列里存，当中断期间内的命令能在队列里拿到，就不需要全量同步。
+>       5. 实际上是slave通过sync命令来同步，同步期间slave会阻塞
 >   - 命令
->       - ``````
+>       - ```replicaof [ip] [port]```
 >   - 配置文件
+>       - ```
+>           vi /etc/redis/6379.conf
+>               replicaof [ip] [port]
+>         ```
+>   - 主从区别
+>       - master：维护同步信息情况，维护同步偏移量。当为AOF模式时，无法实现部分重同步，因为部分重同步需要依赖RDB和缓冲队列。
+>       - slave：通过master获取同步情况
+>   - 可配置参数
+>       - ```
+>           replicaof [masterip] [masterport]
+>           masterauth [master-password]
+>           replica-serve-stale-data [yes|no]  #同步期间是否对外提供请求响应
+>           replica-read-only [yes|no]  #是否只读，一般只读
+>           repl-diskless-sync [yes|no]  #yes：直接通过socket对外传输数据同步，no：先在本地创建RDB文件，在对外传输数据同步（配置在master）
+>           repl-diskless-sync-delay [second]  #延迟同步，以便多个slave发起sync后，将一份RDB文件向多个slave同步数据。否则新来的slave会在队列里等待同步。
+>           repl-timeout [second]
+>           repl-backlog-size [size]  #缓冲slave断开期间的数据，让slave重连后直接在buffer里同步丢失的数据。避免全量同步。
+>           repl-backlog-ttl [second]  #缓冲存活时长
+>           min-replicas-to-write [number]  #当从机数量大于等于[number]时才接收写命令
+>           min-replicas-max-lag [second]  #当从机同步延迟少于等于[second]时才接收写命令
+>         ```
 
 # 高可用
+>   - sentinel的功能
+>       - 监控（monitoring）：检查master和slave是否运作正常。
+>       - 提醒（notification）：sentinel可以通过API向管理员或其他应用程序发送通知。
+>       - 自动故障迁移：协助server的主从替换
+>   - 客户端
+>       - redis-sentinel
+>       - redis-server --sentinel
+>   - 可配置参数
+>       - ```
+>           port [port]  #sentinel实例运行的端口
+>           sentinel monitor [master-name] [ip] [port] [quorum]  #监控master（同步信息存在master），当大于等于[quorum]选举数通过才确认master下线（实际还是需要获取系统中多数支持）。
+>           sentinel auth-pass [master-name] [password]  #master密码
+>           sentinel down-after-milliseconds [master-name] [milliseconds]  #[milliseconds]毫秒后断线可认为下线。（多长时间认为可以下线）
+>           sentinel failover-timeout [master-name] [milliseconds]
+>           sentinel notification-script [master-name] [script-path]
+>           sentinel parallel-sync [master-name] [numreplicas]  #故障迁移时，允许[numreplicas]台slave可同时对新master进行同步
+>         ```
+>   - PS
+>       - sentinel实例一般不跟server在同一台服务上
+>       - sentinel会改变server的配置文件
+>       - sentinel实际通过
+>       - 下线概念
+>           - 主观下线（subjectively down，SDOWN）：单个sentinel实例对服务器作出下线判断
+>           - 客观下线（objectively down，ODOWN）： 多个sentinel实例对同一个服务器作出下（一个 Sentinel 可以通过向另一个 Sentinel 发送 SENTINEL is-master-down-by-addr 命令来询问对方是否认为给定的服务器已下线）
+>       - 服务器对ping命令有效回复有三种：1、PONG，2、LOADING，3、MASTERDOWN。否则在指定时间内没有回复或者回复其他，sentinel认为服务器返回无效。
+>   
 
 # 解决容量小，访问压力
 >   - 客户端
 >       - AKF-Y轴：业务功能拆分
 >           - 使用场景：总体数据量大，抽离业务后数量小
 >           1. 按不同业务的服务模块，区分不同业务功能的redis
->       - AKF-Z轴：数据划分
+>       - AKF-Z轴：数据划分（1-3无法作为数据库方案支撑）
 >           - 使用场景：单独某个业务数据量还是很大，从业务上无法继续拆分
 >           1. hash+取模：一开始确认后机器数，key值取模分布到每台机器（扩充机器时需要全局洗牌，扩展性差，一般不使用）
 >           2. random：随机分布到每台机器上，当用于消息队列，消费端无需知道数据来源，能获取就行（类型kafka的partition）
 >           3. 一致性哈希：虚拟一个环形哈希环，通过映射算法，把机器分布到哈希环上的虚拟点上，key通过hash函数得到哈希环上某个点，再通过这个点获取最临近的机器点上。  
 >               也能通过给每个机器多个点，来解决数据倾斜问题。（扩展时不需要全局洗牌，不过存在数据不能命中：1、不处理，缓存击穿，直接压数据库。2、取2或多个环形节点）
 >   - 当多个客户端对多个redis实例连接时（服务一般有连接池），redis服务端的连接压力很大
->   - 使用代理来减少客户端对redis实例的连接压力
+>   - 代理
+>       - keepalived + nginx + proxy（太重，违背redis初衷，单线程和快速，redis建议直连redis-server）（需要无状态）
+>       - twemproxy
+>       - proxy层实现逻辑：z轴数据划分
+>   - 集群
+>       - codis（对redis源代码有改过）
+>       - twemproxy
+>       - predixy
+>       - cluster
