@@ -528,5 +528,17 @@
 >       
 
 # redis的API
-> - jedis: 单线程，少用，并发不高可用
-> - luttce：底层是netty实现
+> - 客户端使用步骤
+>   1. 建立连接
+>       - 底层框架：redisson（提供各种工具），jedis（单线程，少用，并发不高可用），lettuce（底层是netty实现，现spring默认）
+>       - 连接方式：singleton、replica、sentinel
+>       - 上层框架：spring-boot，spring-data-redis
+>   2. 选择序列化
+>       - 框架自带：直接使用框架自带的StringRedisTemplate
+>       - 自定义配置：自定义自己的redisTemplate，设定好key，value的序列化工具
+>   3. API使用
+>       - 上层使用：redisTemplate，使用便捷，框架抽象好的接口
+>       - 低层使用：redisConnection，自由度高，贴近原生api的接口
+>   4. 注意事项
+>       - 多线程的使用，避免多个线程公用同一个连接，导致事务混乱
+>       - 集群的使用，注意key的分布，避免功能失效。
